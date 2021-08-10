@@ -1,88 +1,42 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-const Button = ({handleClick,text}) => {
-  return ( 
-    <button onClick={handleClick}>{text}</button>
-   );
-}
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
 
-const Statistics = (props) => {
-  
- return(
-   <>
-    <table>
-    <tr>
-    <th>Good</th>
-    <td></td>
-    <td>{props.good}</td>
-    </tr>  
-    <tr>
-    <th>Neutral</th>
-    <td></td>
-    <td>{props.neutral}</td>
-    </tr>  
-    <tr>
-    <th>Bad</th>
-    <td></td>
-    <td>{props.bad}</td>
-    </tr> 
-    <tr>
-    <th>All</th>
-    <td></td>
-    <td>{props.all}</td>
-    </tr>
-    <tr>
-    <th>Average</th>
-    <td></td>
-    <td>{props.average}</td>
-    </tr>
-    <tr>
-    <th>Positive</th>
-    <td></td>
-    <td>{props.positive}%</td>
-    </tr>
-    </table>
-  </>
-  )
-}
-
-
-const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(6)
-  const [neutral, setNeutral] = useState(2)
-  const [bad, setBad] = useState(1)
-  const [all,setAll]= useState( good + bad + neutral)
-  const addGood = ()=>{
-    setGood(good + 1)
+const App = (props) => {
+  const [selected, setSelected] = useState(0)
+  const [vote, setVote] = useState([0,0,0,0,0,0])
+  const randomNumber=()=>{
+    setSelected(Math.round(Math.random() * (5 - 0) + 0))
   }
-  const addNeutral = ()=>{
-    setNeutral(neutral + 1)
-  }
-  const addBad = ()=>{
-    setBad(bad + 1)
+  const votes =()=>{
+  const copy = [...vote ]  
+    copy[selected] += 1
+    setVote(copy)
   }
   return (
     <div>
-    <h1>Give feedback</h1>
-    <Button handleClick={addGood} text='Good'></Button>
-    <Button handleClick={addNeutral} text='Neutral'></Button>
-    <Button handleClick={addBad} text='Bad'></Button>
-    {good + neutral + bad === 0 ?
-    <h1>No feedback given</h1> :
-    <div>
-    <Statistics 
-    good={good} bad={bad} neutral={neutral} 
-    all={good + neutral + bad}
-    average = {(good + neutral + bad)  / 3 }
-    positive={(good / (good+neutral+bad) ) * 100}
-    />
-  </div>
-  }
+      <h1>{props.anecdotes[selected]}</h1>
+      <h1>has {vote[selected]} votes</h1>
+      <button onClick={votes}>Vote</button>
+      <button onClick={randomNumber} >Next anecdote</button>
+      <h1>Anecdote wiht most votes</h1>
+      <h2>{props.anecdotes[vote.indexOf(Math.max(...vote))]} <br />
+      has {Math.max(...vote)} votes
+      </h2>
+
     </div>
   )
 }
 
-ReactDOM.render(<App />, 
+const anecdotes = [
+  'If it hurts, do it more often',
+  'Adding manpower to a late software project makes it later!',
+  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+  'Premature optimization is the root of all evil.',
+  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
+]
+
+ReactDOM.render(
+  <App anecdotes={anecdotes} />,
   document.getElementById('root')
 )
