@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/filter";
 import PersonForm from "./components/form";
 import Persons from "./components/persons";
-import axios from "axios";
-
 import "./index.css";
 import Notification from "./components/notification";
-import phoneservice from "./services/phoneservice";
+import { create, DeletePerson, getAll, update } from "./services/phoneservice";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -14,7 +13,7 @@ const App = () => {
   const [Filtername, setFiltername] = useState("");
   const [notification, setnotification] = useState(null);
   useEffect(() => {
-    phoneservice.getAll("http://localhost:3001/persons").then((response) => {
+    getAll().then((response) => {
       setPersons(response.data);
     });
   }, []);
@@ -50,8 +49,7 @@ const App = () => {
         `The name ${newName} is alredy registered want to update?`
       );
       if (ok) {
-        phoneservice
-          .update(exist.id, nameObject)
+        update(exist.id, nameObject)
           .then((updatedPerson) => {
             setPersons(
               persons.map((person) =>
@@ -66,7 +64,7 @@ const App = () => {
           });
       }
     } else {
-      phoneservice.create(nameObject).then((response) => {
+      create(nameObject).then((response) => {
         setPersons(persons.concat(response.data));
         Notificate(`${newName} created`, "success");
         setNewName("");
@@ -80,8 +78,7 @@ const App = () => {
     let person = persons.find((element) => element.id === id);
     let ok = window.confirm(`Delete ${person.name}?`);
     if (ok) {
-      phoneservice
-        .remove(person.id)
+      DeletePerson(person.id)
         .then((response) => {
           // console.log(response)
           setPersons(persons.filter((person) => person.id !== id));
