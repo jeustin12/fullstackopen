@@ -64,12 +64,16 @@ const App = () => {
           });
       }
     } else {
-      create(nameObject).then((response) => {
-        setPersons(persons.concat(response.data));
-        Notificate(`${newName} created`, "success");
-        setNewName("");
-        setNewNumber("");
-      });
+      create(nameObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          Notificate(`${newName} created`, "success");
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          Notificate(`${error.response.data.error}`, "error");
+        });
     }
     setNewName("");
     setNewNumber("");
